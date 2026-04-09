@@ -1,11 +1,11 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, EventEmitter, Output,Input, Attribute  } from '@angular/core';
+import { Component, EventEmitter, Output, Input, Attribute } from '@angular/core';
 
 
 @Component({
-  selector: 'app-account-details',
-  imports: [CurrencyPipe],
-  template: `
+    selector: 'app-account-details',
+    imports: [CurrencyPipe],
+    template: `
         <div class="card">
            <h2>{{title}}</h2>
 
@@ -18,7 +18,12 @@ import { Component, EventEmitter, Output,Input, Attribute  } from '@angular/core
 
         </div>
   `,
-  styles: `
+    styles: `
+        .card {
+      border: 1px solid #ad8484;
+      padding: 20px;
+      margin-top: 20px;
+    }
   `
 })
 export class AccountDetails {
@@ -26,9 +31,9 @@ export class AccountDetails {
     @Input({ required: true }) balance!: number;
     @Output() closed: EventEmitter<any> = new EventEmitter();
 
-    constructor(@Attribute('title') public title: string) {}
+    constructor(@Attribute('title') public title: string) { }
 
-      close(){
+    close() {
         this.closed.emit()
-      }
+    }
 }

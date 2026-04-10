@@ -3,45 +3,37 @@ import { Component, EventEmitter, Output, Input, Attribute } from '@angular/core
 import { HighlightBalanceDirective } from '../../directives/highlightDirective';
 import { FormatBalancePipe } from '../../pipes/balanceFormatPipe';
 
-
 @Component({
-    selector: 'app-account-details',
-    imports: [ HighlightBalanceDirective, FormatBalancePipe],
-    template: `
-        <div class="card">
-           <h2>{{title}}</h2>
+  selector: 'app-account-details',
+  imports: [HighlightBalanceDirective, FormatBalancePipe],
+  template: `
+    <div class="card">
+      <h2>{{ title }}</h2>
 
-      <p highlight-balance> 
-        Balance: {{ balance | formatBalance: 'R'  }}
-      </p>
-      <p>
-        Account number: {{accountNumber}}
-      </p>
+      <p highlight-balance>Balance: {{ balance | formatBalance: 'R' }}</p>
+      <p>Account number: {{ accountNumber }}</p>
 
       <button (click)="close()">Close</button>
-
-
-        </div>
+    </div>
   `,
-    styles: `
-        .card {
+  styles: `
+    .card {
       border: 1px solid #ad8484;
       padding: 20px;
       margin-top: 20px;
     }
-  `
+  `,
 })
 export class AccountDetails {
+  @Input({ required: true }) balance!: number;
+  @Input() accountNumber!: string;
+  @Output() closed: EventEmitter<any> = new EventEmitter();
+  title!: string;
+  constructor(@Attribute('title') title: string) {
+    this.title = title || 'Account Details';
+  }
 
-    @Input({ required: true }) balance!: number;
-    @Input() accountNumber!: string;
-    @Output() closed: EventEmitter<any> = new EventEmitter();
-    title!: string;
-    constructor(@Attribute('title') title: string) {
-        this.title = title || 'Account Details';
-    }
-
-    close() {
-        this.closed.emit()
-    }
+  close() {
+    this.closed.emit();
+  }
 }

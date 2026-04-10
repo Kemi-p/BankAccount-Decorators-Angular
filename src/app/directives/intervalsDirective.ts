@@ -1,23 +1,23 @@
-import { Directive, Input, OnInit, OnDestroy } from "@angular/core";
-import { BankAccount } from "../accountsModel";
+import { Directive, Input, OnInit, OnDestroy } from '@angular/core';
+import { BankAccount } from '../accountsModel';
 
 @Directive({
-    selector: '[updateBalance]',
+  selector: '[updateBalance]',
 })
 export class UpdateBalanceDirective implements OnInit, OnDestroy {
-    @Input() updateBalance!: BankAccount[];
+  @Input() updateBalance!: BankAccount[];
 
-    private intervalId: ReturnType<typeof setInterval> | undefined;
+  private intervalId: ReturnType<typeof setInterval> | undefined;
 
-    ngOnInit() {
-        this.intervalId = setInterval(() => {
-            this.updateBalance.forEach(acc => {
-                acc.balance += Math.floor(Math.random() * 1000 - 500);
-            });
-        }, 7000);
-    }
+  ngOnInit() {
+    this.intervalId = setInterval(() => {
+      this.updateBalance.forEach((acc) => {
+        acc.balance += Math.floor(Math.random() * 1000 - 500);
+      });
+    }, 7000);
+  }
 
-    ngOnDestroy() {
-        clearInterval(this.intervalId);
-    }
+  ngOnDestroy() {
+    clearInterval(this.intervalId);
+  }
 }

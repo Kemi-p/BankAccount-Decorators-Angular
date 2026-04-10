@@ -1,55 +1,43 @@
 <h1>Bank Accounts</h1>
 
 @defer (on timer(5000)) {
-<div class="cards" [updateBalance] ="accounts">
+  <div class="cards" [updateBalance]="accounts">
+    @for (acc of accounts; track acc.id) {
+      @if (acc.active) {
+        <mat-card class="card" (click)="selectAccount(acc)">
+          <mat-card-header>
+            <mat-card-title>{{ acc.title }}</mat-card-title>
+          </mat-card-header>
 
-  @for (acc of accounts; track acc.id) {
+          <mat-card-content>
+            @switch (acc.type) {
+              @case ('cheque') {
+                <p>{{ acc.balance | formatBalance: 'R' }}</p>
+              }
 
-    @if (acc.active) {
+              @case ('savings') {
+                <p>{{ acc.balance | formatBalance: '$' }}</p>
+              }
 
-      <mat-card class="card" (click)="selectAccount(acc)">
+              @case ('business') {
+                <p>{{ acc.balance | formatBalance: '€' }}</p>
+              }
 
-        <mat-card-header>
-          <mat-card-title>{{ acc.title }}</mat-card-title>
-        </mat-card-header>
+              @case ('investment') {
+                <p>{{ acc.balance | formatBalance: '£' }}</p>
+              }
 
-        <mat-card-content>
-
-          @switch (acc.type) {
-
-            @case ('cheque') {
-              <p>{{ acc.balance | formatBalance:'R' }}</p>
+              @default {
+                <p>{{ acc.balance | formatBalance: 'R' }}</p>
+              }
             }
-
-            @case ('savings') {
-              <p>{{ acc.balance | formatBalance:'$' }}</p>
-            }
-
-            @case ('business') {
-              <p>{{ acc.balance | formatBalance:'€' }}</p>
-            }
-
-            @case ('investment') {
-              <p>{{ acc.balance | formatBalance:'£' }}</p>
-            }
-
-            @default {
-              <p>{{ acc.balance | formatBalance:'R' }}</p>
-            }
-
-          }
-
-        </mat-card-content>
-
-      </mat-card>
-
+          </mat-card-content>
+        </mat-card>
+      }
+    } @empty {
+      <p>No accounts found.</p>
     }
-
-  } @empty {
-    <p>No accounts found.</p>
-  }
-
-</div>
+  </div>
 } @placeholder {
   <h2>Loading all the active the accounts</h2>
 }

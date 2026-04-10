@@ -1,20 +1,30 @@
 <h1>Bank Accounts</h1>
 
 <div class="cards">
-  <div 
-    class="card" 
-    *ngFor="let acc of accounts"
-    (click)="selectAccount(acc)"
-  >
-    <h3>{{ acc.title }}</h3>
-    <p>{{ acc.balance | currency }}</p>
-  </div>
+  @for (acc of accounts(); track acc.id) {
+    <mat-card 
+      class="card"
+      (click)="selectAccount(acc)"
+    >
+      <mat-card-header>
+        <mat-card-title>{{ acc.title }}</mat-card-title>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <p>{{ acc.balance | currency:'R' }}</p>
+      </mat-card-content>
+    </mat-card>
+  } @empty {
+    <p>No accounts found.</p>
+  }
 </div>
 
-<app-account-details
-  *ngIf="selectedAccount"
-  [balance]="selectedAccount.balance"
-  title="Account Details"
-  (closed)="closeDetails()"
->
-</app-account-details>
+@if (selectedAccount(); as selected) {
+  <app-account-details
+    [balance]="selected.balance"
+    [accountNumber]="selected.accountNumber"
+    [title]="selected.title"
+    (closed)="closeDetails()"
+  >
+  </app-account-details>
+}

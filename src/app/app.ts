@@ -1,72 +1,42 @@
-import { Component, signal } from '@angular/core';
-import type {BankAccount} from './accountsModel'
-import { CommonModule, CurrencyPipe, NgFor, NgIf } from '@angular/common';
+import { Component, signal, computed } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
 import { AccountDetails } from "./components/account-details/account-details";
+import { accounts as mockData } from './mockData'; 
+import type { BankAccount } from './accountsModel';
 
 @Component({
   selector: 'app-root',
-  imports: [CurrencyPipe, AccountDetails, NgFor,NgIf,CommonModule],
+  standalone: true, 
+  imports: [CurrencyPipe, AccountDetails, MatCardModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('BankAccount-Decorators-Angular');
+  accounts = signal<BankAccount[]>(mockData);
+  
+  selectedAccountId = signal<number | null>(null);
 
-  accounts: BankAccount[] = [
-    {
-      id: 1,
-      title: 'Cheque Account',
-      accountNumber: '62384750192',
-      balance: 1845,
-      type: 'cheque',
-    },
-    {
-      id: 2,
-      title: 'Savings Account',
-      accountNumber: '90112847364',
-      balance: 5200,
-      type: 'savings',
-    },
-    {
-      id: 3,
-      title: 'Credit Account',
-      accountNumber: '4532118374920183',
-      balance: 8340.20,
-      type: 'credit',
-    },
-    {
-      id: 4,
-      title: 'Investment Account',
-      accountNumber: '300948712653567',
-      balance: 142875.50,
-      type: 'investment',
-    },
-     {
-      id: 5,
-      title: 'Business Account',
-      accountNumber: '2673994366332243',
-      balance: 1456224,
-      type: 'business',
-    },
-  ];
-
-  selectedAccount: any = null;
+  selectedAccount = computed(() => 
+    this.accounts().find(acc => acc.id === this.selectedAccountId()) || null
+  );
 
   constructor() {
-   
     setInterval(() => {
-      this.accounts.forEach(acc => {
-        acc.balance += Math.floor(Math.random() * 1000 - 500);
-      });
+      this.accounts.update(currentAccounts => 
+        currentAccounts.map(acc => ({
+          ...acc,
+          balance: acc.balance + Math.floor(Math.random() * 1000 - 500)
+        }))
+      );
     }, 3000);
   }
 
-  selectAccount(account: any) {
-    this.selectedAccount = account;
+  selectAccount(account: BankAccount) {
+    this.selectedAccountId.set(account.id);
   }
 
   closeDetails() {
-    this.selectedAccount = null;
+    this.selectedAccountId.set(null);
   }
-
 }

@@ -7,6 +7,6 @@ import { Directive, ElementRef } from '@angular/core';
 export class HighlightBalanceDirective {
   constructor(private el: ElementRef) {
     this.el.nativeElement.style.fontWeight = 'bold';
-    this.el.nativeElement.style.color = 'green';
+    this.el.nativeElement.style.color = 'blue';
   }
 }

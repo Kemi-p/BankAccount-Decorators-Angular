@@ -10,8 +10,8 @@ import { HighlightBalanceDirective } from '../../directives/highlightDirective';
         <div class="card">
            <h2>{{title}}</h2>
 
-      <p highlight-balance> <!--TOdo: My directive to hightlith the bank balance-->
-        Balance: {{ balance | currency }}
+      <p highlight-balance> 
+        Balance: {{ balance | currency: 'R'  }}
       </p>
       <p>
         Account number: {{accountNumber}}
@@ -33,10 +33,12 @@ import { HighlightBalanceDirective } from '../../directives/highlightDirective';
 export class AccountDetails {
 
     @Input({ required: true }) balance!: number;
-    @Input() accountNumber!:number;
+    @Input() accountNumber!: string;
     @Output() closed: EventEmitter<any> = new EventEmitter();
-
-    constructor(@Attribute('title') public title: string) { }
+    title!: string;
+    constructor(@Attribute('title') title: string) {
+        this.title = title || 'Account Details';
+    }
 
     close() {
         this.closed.emit()

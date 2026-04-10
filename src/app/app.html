@@ -21,7 +21,9 @@
   }
 </div>
 
-@if (selectedAccount(); as selected) {
+@let selected = selectedAccount();
+
+@if (selected) {
   <app-account-details
     [balance]="selected.balance"
     [accountNumber]="selected.accountNumber"

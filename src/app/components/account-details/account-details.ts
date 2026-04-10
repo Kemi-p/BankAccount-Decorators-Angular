@@ -1,16 +1,20 @@
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, NgFor, NgIf } from '@angular/common';
 import { Component, EventEmitter, Output, Input, Attribute } from '@angular/core';
+import { HighlightBalanceDirective } from '../../directives/highlightDirective';
 
 
 @Component({
     selector: 'app-account-details',
-    imports: [CurrencyPipe],
+    imports: [CurrencyPipe, HighlightBalanceDirective],
     template: `
         <div class="card">
            <h2>{{title}}</h2>
 
-      <p BalanceHighlight> <!--TOdo: My directive to hightlith the bank balance-->
+      <p highlight-balance> <!--TOdo: My directive to hightlith the bank balance-->
         Balance: {{ balance | currency }}
+      </p>
+      <p>
+        Account number: {{accountNumber}}
       </p>
 
       <button (click)="close()">Close</button>
@@ -29,6 +33,7 @@ import { Component, EventEmitter, Output, Input, Attribute } from '@angular/core
 export class AccountDetails {
 
     @Input({ required: true }) balance!: number;
+    @Input() accountNumber!:number;
     @Output() closed: EventEmitter<any> = new EventEmitter();
 
     constructor(@Attribute('title') public title: string) { }

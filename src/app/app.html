@@ -1,0 +1,20 @@
+<h1>Bank Accounts</h1>
+
+<div class="cards">
+  <div 
+    class="card" 
+    *ngFor="let acc of accounts"
+    (click)="selectAccount(acc)"
+  >
+    <h3>{{ acc.title }}</h3>
+    <p>{{ acc.balance | currency }}</p>
+  </div>
+</div>
+
+<app-account-details
+  *ngIf="selectedAccount"
+  [balance]="selectedAccount.balance"
+  title="Account Details"
+  (closed)="closeDetails()"
+>
+</app-account-details>

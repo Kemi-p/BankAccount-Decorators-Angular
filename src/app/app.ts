@@ -1,9 +1,11 @@
 import { Component, signal } from '@angular/core';
 import type {BankAccount} from './accountsModel'
+import { CommonModule, CurrencyPipe, NgFor, NgIf } from '@angular/common';
+import { AccountDetails } from "./components/account-details/account-details";
 
 @Component({
   selector: 'app-root',
-  imports: [],
+  imports: [CurrencyPipe, AccountDetails, NgFor,NgIf,CommonModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -47,5 +49,24 @@ export class App {
       type: 'business',
     },
   ];
+
+  selectedAccount: any = null;
+
+  constructor() {
+   
+    setInterval(() => {
+      this.accounts.forEach(acc => {
+        acc.balance += Math.floor(Math.random() * 1000 - 500);
+      });
+    }, 3000);
+  }
+
+  selectAccount(account: any) {
+    this.selectedAccount = account;
+  }
+
+  closeDetails() {
+    this.selectedAccount = null;
+  }
 
 }

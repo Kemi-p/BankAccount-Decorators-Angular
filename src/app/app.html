@@ -2,6 +2,7 @@
 
 <div class="cards">
   @for (acc of accounts(); track acc.id) {
+    @if (acc.active){
     <mat-card 
       class="card"
       (click)="selectAccount(acc)"
@@ -14,6 +15,7 @@
         <p>{{ acc.balance | currency:'R' }}</p>
       </mat-card-content>
     </mat-card>
+  }
   } @empty {
     <p>No accounts found.</p>
   }

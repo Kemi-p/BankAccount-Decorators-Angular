@@ -29,7 +29,7 @@ export class App {
           balance: acc.balance + Math.floor(Math.random() * 1000 - 500)
         }))
       );
-    }, 3000);
+    }, 7000);
   }
 
   selectAccount(account: BankAccount) {

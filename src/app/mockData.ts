@@ -7,6 +7,7 @@ export const accounts: BankAccount[] = [
       accountNumber: '62384750192',
       balance: 1845,
       type: 'cheque',
+      active: true,
     },
     {
       id: 2,
@@ -14,6 +15,7 @@ export const accounts: BankAccount[] = [
       accountNumber: '90112847364',
       balance: 5200,
       type: 'savings',
+      active: true,
     },
     {
       id: 3,
@@ -21,6 +23,7 @@ export const accounts: BankAccount[] = [
       accountNumber: '4532118374920183',
       balance: 8340.20,
       type: 'credit',
+      active: false,
     },
     {
       id: 4,
@@ -28,6 +31,7 @@ export const accounts: BankAccount[] = [
       accountNumber: '300948712653567',
       balance: 142875.50,
       type: 'investment',
+      active: true,
     },
      {
       id: 5,
@@ -35,5 +39,6 @@ export const accounts: BankAccount[] = [
       accountNumber: '2673994366332243',
       balance: 1456224,
       type: 'business',
+      active: false,
     },
   ];

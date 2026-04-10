@@ -29,7 +29,7 @@ export const accounts: BankAccount[] = [
       id: 4,
       title: 'Investment Account',
       accountNumber: '300948712653567',
-      balance: 142875.50,
+      balance: 142875.5009,
       type: 'investment',
       active: true,
     },

@@ -1,17 +1,18 @@
 import { CurrencyPipe, NgFor, NgIf } from '@angular/common';
 import { Component, EventEmitter, Output, Input, Attribute } from '@angular/core';
 import { HighlightBalanceDirective } from '../../directives/highlightDirective';
+import { FormatBalancePipe } from '../../pipes/balanceFormatPipe';
 
 
 @Component({
     selector: 'app-account-details',
-    imports: [CurrencyPipe, HighlightBalanceDirective],
+    imports: [ HighlightBalanceDirective, FormatBalancePipe],
     template: `
         <div class="card">
            <h2>{{title}}</h2>
 
       <p highlight-balance> 
-        Balance: {{ balance | currency: 'R'  }}
+        Balance: {{ balance | formatBalance  }}
       </p>
       <p>
         Account number: {{accountNumber}}

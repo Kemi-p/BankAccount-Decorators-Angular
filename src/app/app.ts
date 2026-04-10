@@ -4,11 +4,12 @@ import { MatCardModule } from '@angular/material/card';
 import { AccountDetails } from "./components/account-details/account-details";
 import { accounts as mockData } from './mockData'; 
 import type { BankAccount } from './accountsModel';
+import { FormatBalancePipe } from './pipes/balanceFormatPipe';
 
 @Component({
   selector: 'app-root',
   standalone: true, 
-  imports: [CurrencyPipe, AccountDetails, MatCardModule],
+  imports: [FormatBalancePipe, AccountDetails, MatCardModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

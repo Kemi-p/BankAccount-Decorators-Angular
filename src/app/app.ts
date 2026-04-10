@@ -5,39 +5,28 @@ import { AccountDetails } from "./components/account-details/account-details";
 import { accounts as mockData } from './mockData'; 
 import type { BankAccount } from './accountsModel';
 import { FormatBalancePipe } from './pipes/balanceFormatPipe';
+import { UpdateBalanceDirective } from './directives/intervalsDirective';
 
 @Component({
   selector: 'app-root',
-  standalone: true, 
-  imports: [FormatBalancePipe, AccountDetails, MatCardModule],
+  imports: [FormatBalancePipe, UpdateBalanceDirective, AccountDetails, MatCardModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
-  accounts = signal<BankAccount[]>(mockData);
+  accounts: BankAccount[]=mockData;
   
-  selectedAccountId = signal<number | null>(null);
+  selectedAccountId: number | null=null;
 
-  selectedAccount = computed(() => 
-    this.accounts().find(acc => acc.id === this.selectedAccountId()) || null
-  );
-
-  constructor() {
-    setInterval(() => {
-      this.accounts.update(currentAccounts => 
-        currentAccounts.map(acc => ({
-          ...acc,
-          balance: acc.balance + Math.floor(Math.random() * 1000 - 500)
-        }))
-      );
-    }, 7000);
-  }
+  get selectedAccount(): BankAccount | null{
+   return this.accounts.find(acc => acc.id === this.selectedAccountId) || null
+  };
 
   selectAccount(account: BankAccount) {
-    this.selectedAccountId.set(account.id);
+    this.selectedAccountId=account.id;
   }
 
   closeDetails() {
-    this.selectedAccountId.set(null);
+    this.selectedAccountId=null;
   }
 }

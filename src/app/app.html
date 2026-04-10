@@ -1,9 +1,9 @@
 <h1>Bank Accounts</h1>
 
 @defer (on timer(5000)) {
-<div class="cards">
+<div class="cards" [updateBalance] ="accounts">
 
-  @for (acc of accounts(); track acc.id) {
+  @for (acc of accounts; track acc.id) {
 
     @if (acc.active) {
 
@@ -54,7 +54,7 @@
   <h2>Loading all the active the accounts</h2>
 }
 
-@let selected = selectedAccount();
+@let selected = selectedAccount;
 
 @if (selected) {
   <app-account-details

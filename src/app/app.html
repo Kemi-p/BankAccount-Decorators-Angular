@@ -1,24 +1,53 @@
 <h1>Bank Accounts</h1>
 
 <div class="cards">
+
   @for (acc of accounts(); track acc.id) {
-    @if (acc.active){
-    <mat-card 
-      class="card"
-      (click)="selectAccount(acc)"
-    >
-      <mat-card-header>
-        <mat-card-title>{{ acc.title }}</mat-card-title>
-      </mat-card-header>
-      
-      <mat-card-content>
-        <p>{{ acc.balance | formatBalance }}</p>
-      </mat-card-content>
-    </mat-card>
-  }
+
+    @if (acc.active) {
+
+      <mat-card class="card" (click)="selectAccount(acc)">
+
+        <mat-card-header>
+          <mat-card-title>{{ acc.title }}</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+
+          @switch (acc.type) {
+
+            @case ('cheque') {
+              <p>{{ acc.balance | formatBalance:'R' }}</p>
+            }
+
+            @case ('savings') {
+              <p>{{ acc.balance | formatBalance:'$' }}</p>
+            }
+
+            @case ('business') {
+              <p>{{ acc.balance | formatBalance:'€' }}</p>
+            }
+
+            @case ('investment') {
+              <p>{{ acc.balance | formatBalance:'£' }}</p>
+            }
+
+            @default {
+              <p>{{ acc.balance | formatBalance:'R' }}</p>
+            }
+
+          }
+
+        </mat-card-content>
+
+      </mat-card>
+
+    }
+
   } @empty {
     <p>No accounts found.</p>
   }
+
 </div>
 
 @let selected = selectedAccount();

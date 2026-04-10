@@ -12,7 +12,7 @@ import { FormatBalancePipe } from '../../pipes/balanceFormatPipe';
            <h2>{{title}}</h2>
 
       <p highlight-balance> 
-        Balance: {{ balance | formatBalance  }}
+        Balance: {{ balance | formatBalance: 'R'  }}
       </p>
       <p>
         Account number: {{accountNumber}}

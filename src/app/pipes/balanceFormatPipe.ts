@@ -7,7 +7,7 @@ import { Pipe, PipeTransform } from "@angular/core";
 
 export class FormatBalancePipe implements PipeTransform {
     //R1002343.45
-    transform(value: number) {
+    transform(value: number, currency: string) {
         const parts = value.toFixed(2).split('.');
         let whole = parts[0];
         const decimal = parts[1];
@@ -21,7 +21,7 @@ export class FormatBalancePipe implements PipeTransform {
 
         result = whole + result;
 
-        return 'R' + result + '.' + decimal;
+        return  currency + result + '.' + decimal;
 
     }
 

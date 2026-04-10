@@ -1,3 +1,10 @@
+h1 {
+  font-size: 1.75rem;
+  font-weight: 500;
+  margin-bottom: 24px;
+  color: var(--mat-sys-on-surface);
+}
+
 .cards {
   display: flex;
   gap: 15px;
@@ -8,9 +15,12 @@
   width: 200px;
   padding: 10px;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .card:hover {
-  transform: scale(1.05);
+  transform: translateY(-3px);
+  box-shadow: var(--mat-sys-level3);
 }

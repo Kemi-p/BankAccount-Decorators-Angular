@@ -1,55 +1,56 @@
-<h1>Bank Accounts</h1>
+<mat-toolbar color="primary">
+    <mat-icon>account_balance_wallet</mat-icon>
+    <span style="margin-left: 8px">Bank Accounts</span>
+</mat-toolbar>
 
-@defer (on timer(5000)) {
-  <div class="cards" [updateBalance]="accounts">
-    @for (acc of accounts; track acc.id) {
-      @if (acc.active) {
-        <mat-card class="card" (click)="selectAccount(acc)">
-          <mat-card-header>
-            <mat-card-title>{{ acc.title }}</mat-card-title>
-          </mat-card-header>
-
-          <mat-card-content>
-            @switch (acc.type) {
-              @case ('cheque') {
-                <p>{{ acc.balance | formatBalance: 'R' }}</p>
+<div style="padding: 24px">
+  @defer (on timer(5000)) {
+    <div class="cards" [updateBalance]="accounts">
+      @for (acc of accounts; track acc.id) {
+        @if (acc.active) {
+          <mat-card class="card" appearance="outlined" (click)="selectAccount(acc)">
+            <mat-card-header>
+              <mat-icon mat-card-avatar>credit_card</mat-icon>
+              <mat-card-title>{{ acc.title }}</mat-card-title>
+              <mat-card-subtitle>{{ acc.type | titlecase }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              @switch (acc.type) {
+                @case ('cheque') {
+                  <p>{{ acc.balance | formatBalance: 'R' }}</p>
+                }
+                @case ('savings') {
+                  <p>{{ acc.balance | formatBalance: '$' }}</p>
+                }
+                @case ('business') {
+                  <p>{{ acc.balance | formatBalance: '€' }}</p>
+                }
+                @case ('investment') {
+                  <p>{{ acc.balance | formatBalance: '£' }}</p>
+                }
+                @default {
+                  <p>{{ acc.balance | formatBalance: 'R' }}</p>
+                }
               }
-
-              @case ('savings') {
-                <p>{{ acc.balance | formatBalance: '$' }}</p>
-              }
-
-              @case ('business') {
-                <p>{{ acc.balance | formatBalance: '€' }}</p>
-              }
-
-              @case ('investment') {
-                <p>{{ acc.balance | formatBalance: '£' }}</p>
-              }
-
-              @default {
-                <p>{{ acc.balance | formatBalance: 'R' }}</p>
-              }
-            }
-          </mat-card-content>
-        </mat-card>
+            </mat-card-content>
+          </mat-card>
+        }
+      } @empty {
+        <p>No accounts found.</p>
       }
-    } @empty {
-      <p>No accounts found.</p>
-    }
-  </div>
-} @placeholder {
-  <h2>Loading all the active the accounts</h2>
-}
+    </div>
+  } @placeholder {
+    <mat-spinner diameter="36"></mat-spinner>
+    <p>Loading accounts…</p>
+  }
 
-@let selected = selectedAccount;
-
-@if (selected) {
-  <app-account-details
-    [balance]="selected.balance"
-    [accountNumber]="selected.accountNumber"
-    [title]="selected.title"
-    (closed)="closeDetails()"
-  >
-  </app-account-details>
-}
+  @let selected = selectedAccount;
+  @if (selected) {
+    <app-account-details
+      [balance]="selected.balance"
+      [accountNumber]="selected.accountNumber"
+      [title]="selected.title"
+      (closed)="closeDetails()"
+    />
+  }
+</div>

@@ -1,5 +1,6 @@
 <h1>Bank Accounts</h1>
 
+@defer (on timer(5000)) {
 <div class="cards">
 
   @for (acc of accounts(); track acc.id) {
@@ -49,6 +50,9 @@
   }
 
 </div>
+} @placeholder {
+  <h2>Loading all the active the accounts</h2>
+}
 
 @let selected = selectedAccount();
 

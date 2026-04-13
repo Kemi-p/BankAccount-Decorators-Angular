@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { NetWorthService } from './services/net-worth-service';
 import { UserService } from './services/user-service';
 import { User } from './models/userModel';
+import { THEME_CONFIG, ThemeConfig } from './factory/theme-factory';
 @Component({
   selector: 'app-root',
   imports: [
@@ -32,8 +33,13 @@ export class App {
   accounts: BankAccount[] = mockData;
   netWorthser= inject(NetWorthService)
   userService = inject(UserService)
+  themeConfig = inject(THEME_CONFIG)
 
   selectedAccountId: number | null = null;
+
+  ngOnInit() {
+    this.applyTheme();
+  }
 
   currentUser:User = this.userService.getUser()
 
@@ -49,6 +55,17 @@ export class App {
   get netWorth() : number {
     return this.netWorthser.calcNetWorth(this.accounts)
   }
+  
+  applyTheme() {
+  const body = document.body;
+
+  if (this.themeConfig.theme === 'dark') {
+    body.classList.add('dark-theme');
+  } else {
+    body.classList.remove('dark-theme');
+  }
+}
+
   closeDetails() {
     this.selectedAccountId = null;
   }

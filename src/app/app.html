@@ -3,6 +3,18 @@
     <span style="margin-left: 8px">Bank Accounts</span>
 </mat-toolbar>
 
+ <div class="user-info">
+  <span> Name: {{currentUser.name}}</span>
+</div>
+ <div class="user-info">
+  <span> Email: {{currentUser.email}}</span>
+</div>
+
+
+<div class="networth-section">
+ <span class="net-worth-balance"> Networth: {{netWorth | formatBalance: 'R'}}</span>
+</div>
+
 <div style="padding: 24px">
   @defer (on timer(5000)) {
     <div class="cards" [updateBalance]="accounts">

@@ -1,5 +1,5 @@
 import { Directive, Input, OnInit, OnDestroy } from '@angular/core';
-import { BankAccount } from '../accountsModel';
+import { BankAccount } from '../models/accountsModel';
 
 @Directive({
   selector: '[updateBalance]',

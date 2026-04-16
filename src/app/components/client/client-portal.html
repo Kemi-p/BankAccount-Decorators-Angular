@@ -1,8 +1,15 @@
 <h2>Client Portal</h2>
 
 <h3>Star Wars Characters</h3>
-<ul>
-  <li *ngFor="let c of characters">
-    {{ c.name }} - {{c.gender}}
-  </li>
-</ul>
+
+@if (loading$ | async) {
+  <p>Loading characters...</p>
+} @else {
+  <ul>
+    @for (c of (characters$ | async); track c.url) {
+      <li>
+        {{ c.name }} - {{ c.gender }}
+      </li>
+    }
+  </ul>
+}

@@ -1,7 +1,9 @@
 import { Component, inject } from "@angular/core"
 import { SwapiService, Person } from "../../services/swapi-service"
 import { CommonModule } from "@angular/common";
-
+import * as CharacterActions from '../../state/character.actions'
+import * as CharacterSelectors from '../../state/character.selector'
+import { Store } from "@ngrx/store";
 @Component({
     selector:'login',
     imports:[CommonModule],
@@ -10,13 +12,26 @@ import { CommonModule } from "@angular/common";
 })
 
 export class ClientPortalComponent{
-    private swapi= inject(SwapiService)
+   private store = inject(Store);
+  private swapi = inject(SwapiService);
 
-    characters: Person[] = [];
+  characters$ = this.store.select(CharacterSelectors.selectCharacters);
+  loading$ = this.store.select(CharacterSelectors.selectLoading);
 
-  constructor() {
-    this.swapi.getCharacters().subscribe(data => {
-      this.characters = data.slice(0, 20);
+  ngOnInit() {
+    this.store.dispatch(CharacterActions.loadCharacters());
+
+    this.swapi.getCharacters().subscribe({
+      next: (data) => {
+        this.store.dispatch(
+          CharacterActions.loadCharactersSuccess({
+            characters: data
+          })
+        );
+      },
+      error: () => {
+        this.store.dispatch(CharacterActions.loadCharactersFailure());
+      }
     });
   }
 }

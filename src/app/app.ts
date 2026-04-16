@@ -14,59 +14,25 @@ import { NetWorthService } from './services/net-worth-service';
 import { UserService } from './services/user-service';
 import { User } from './models/userModel';
 import { THEME_CONFIG, ThemeConfig } from './factory/theme-factory';
+import { Router, RouterLinkActive, RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-root',
-  imports: [
-    FormatBalancePipe,
-    UpdateBalanceDirective,
-    AccountDetails,
-    MatCardModule,
-    MatToolbarModule,
-    MatProgressSpinnerModule,
-    TitleCasePipe,
-    MatIconModule,
-  ],
+  imports: [RouterLinkActive, RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
 export class App {
-  accounts: BankAccount[] = mockData;
-  netWorthser= inject(NetWorthService)
-  userService = inject(UserService)
-  themeConfig = inject(THEME_CONFIG)
+  private router = inject(Router);
 
-  selectedAccountId: number | null = null;
-
-  ngOnInit() {
-    this.applyTheme();
+  navigateToBank(){
+    this.router.navigate(['/bank'])
   }
 
-  currentUser:User = this.userService.getUser()
-
-  get selectedAccount(): BankAccount | null {
-    return this.accounts.find((acc) => acc.id === this.selectedAccountId) || null;
+  navigateToClient(){
+    this.router.navigate(['/client'])
   }
 
-  selectAccount(account: BankAccount) {
-    this.selectedAccountId = account.id;
-  }
-
-
-  get netWorth() : number {
-    return this.netWorthser.calcNetWorth(this.accounts)
-  }
-  
-  applyTheme() {
-  const body = document.body;
-
-  if (this.themeConfig.theme === 'dark') {
-    body.classList.add('dark-theme');
-  } else {
-    body.classList.remove('dark-theme');
-  }
-}
-
-  closeDetails() {
-    this.selectedAccountId = null;
+  navigateToLoan(){
+    this.router.navigate(['/loan'])
   }
 }

@@ -1,20 +1,38 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-
+import { Component, signal, computed, inject } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { AccountDetails } from './components/account-details/account-details';
+import { accounts as mockData } from './mockData';
+import type { BankAccount } from './models/accountsModel';
+import { FormatBalancePipe } from './pipes/balanceFormatPipe';
+import { UpdateBalanceDirective } from './directives/intervalsDirective';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TitleCasePipe } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { NetWorthService } from './services/net-worth-service';
+import { UserService } from './services/user-service';
+import { User } from './models/userModel';
+import { THEME_CONFIG, ThemeConfig } from './factory/theme-factory';
+import { Router, RouterLinkActive, RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterLinkActive, RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App {
-  protected readonly title = signal('BankAccount-Decorators-Angular');
+  private router = inject(Router);
 
-  accounts = [
-    {id:1, name:'Cheque', balance:1756},
-     {id:2, name:'Savings', balance:1756},
-      {id:3, name:'Fixed deposit', balance:1756},
-       {id:4, name:'Credit', balance:1756},
-        {id:5, name:'Business', balance:1756}
-  ]
+  navigateToBank(){
+    this.router.navigate(['/bank'])
+  }
+
+  navigateToClient(){
+    this.router.navigate(['/client'])
+  }
+
+  navigateToLoan(){
+    this.router.navigate(['/loan'])
+  }
 }

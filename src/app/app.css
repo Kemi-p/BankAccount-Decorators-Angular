@@ -1,0 +1,17 @@
+.nav {
+  padding: 16px;
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button.active {
+  background: #2563eb;
+  color: white;
+}

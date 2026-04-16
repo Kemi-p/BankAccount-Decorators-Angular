@@ -2,10 +2,11 @@ import { Routes } from '@angular/router';
 import { ClientPortalComponent } from './components/client/client-portal';
 import { LoanOfficelComponent } from './components/loan/loan-office';
 import { App } from './app';
+import { BankComponent } from './bank/bank';
 
 export const routes: Routes = [
-    { path: 'home', component: App },
+    {path:'home', component: App },
     {path:'client', component:ClientPortalComponent},
-    {path:'banker', component: LoanOfficelComponent},
-    { path: '', redirectTo: 'client', pathMatch: 'full' },
+    {path:'loan', component: LoanOfficelComponent},
+    {path:'bank', component: BankComponent },
 ];

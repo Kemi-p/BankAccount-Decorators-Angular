@@ -1,26 +1,17 @@
-h1 {
-  font-size: 1.75rem;
-  font-weight: 500;
-  margin-bottom: 24px;
-  color: var(--mat-sys-on-surface);
-}
-
-.cards {
+.nav {
+  padding: 16px;
   display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.card {
-  width: 200px;
-  padding: 10px;
+button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
-  transition:
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
 }
 
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--mat-sys-level3);
+button.active {
+  background: #2563eb;
+  color: white;
 }

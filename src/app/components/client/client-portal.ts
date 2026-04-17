@@ -1,37 +1,44 @@
-import { Component, inject } from "@angular/core"
-import { SwapiService, Person } from "../../services/swapi-service"
-import { CommonModule } from "@angular/common";
-import * as CharacterActions from '../../state/characters/character.actions'
-import * as CharacterSelectors from '../../state/characters/character.selector'
-import { Store } from "@ngrx/store";
+import { Component, inject, Pipe } from '@angular/core';
+import { SwapiService, Vehicle, Starship } from '../../services/swapi-service';
+import { Store } from '@ngrx/store';
+import * as AppActions from '../../state/app/app.actions';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { selectUser } from '../../state/app/app.rselector';
+import { selectLoans } from '../../state/app/app.rselector';
+import { AsyncPipe } from '@angular/common';
+import { MatCard, MatCardActions, MatCardContent, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import {MatChipsModule} from '@angular/material/chips';
+
 @Component({
-    selector:'login',
-    imports:[CommonModule],
-    templateUrl:'./client-portal.html',
-    styleUrl:'./client-portal.css'
+  selector: 'app-client',
+  imports:[AsyncPipe, MatCardActions, MatCardTitle, MatCard, MatCardSubtitle,MatChipsModule, MatCardContent],
+  templateUrl: './client-portal.html',
+  styleUrls: ['./client-portal.css'],
 })
-
-export class ClientPortalComponent{
-   private store = inject(Store);
+export class ClientPortalComponent {
   private swapi = inject(SwapiService);
+  private store = inject(Store);
 
-  characters$ = this.store.select(CharacterSelectors.selectCharacters);
-  loading$ = this.store.select(CharacterSelectors.selectLoading);
+  vehicles = toSignal(this.swapi.getVehicles(), { initialValue: [] });
+  starships = toSignal(this.swapi.getStarships(), { initialValue: [] });
 
-  ngOnInit() {
-    this.store.dispatch(CharacterActions.loadCharacters());
+  user$ = this.store.select(selectUser);
+  loans$ = this.store.select(selectLoans)
 
-    this.swapi.getCharacters().subscribe({
-      next: (data) => {
-        this.store.dispatch(
-          CharacterActions.loadCharactersSuccess({
-            characters: data
-          })
-        );
-      },
-      error: () => {
-        this.store.dispatch(CharacterActions.loadCharactersFailure());
-      }
-    });
+  requestLoan(assetName: string) {
+    let userName = '';
+
+    this.user$.subscribe(u => userName = u?.name || '');
+
+    this.store.dispatch(
+      AppActions.createLoan({
+        loan: {
+          id: Date.now(),
+          character: userName,
+          asset: assetName,
+          status: 'pending',
+        },
+      })
+    );
   }
 }

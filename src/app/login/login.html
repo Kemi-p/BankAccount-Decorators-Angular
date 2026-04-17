@@ -1,0 +1,16 @@
+<h2>Login</h2>
+
+<label>Select Character</label>
+<select [(ngModel)]="selectedCharacter">
+  @for (c of characters(); track c.url) {
+    <option [ngValue]="c">{{ c.name }}</option>
+  }
+</select>
+
+<label>Select Role</label>
+<select [(ngModel)]="selectedRole">
+  <option value="client">Client</option>
+  <option value="banker">Banker</option>
+</select>
+
+<button (click)="login()">Enter</button>

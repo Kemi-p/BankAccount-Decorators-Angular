@@ -1,15 +1,80 @@
-<h2>Client Portal</h2>
+<div class="page">
+  <div class="user-bar">
 
-<h3>Star Wars Characters</h3>
+  @if (user$ | async; as user) {
+    <div class="user-info">
+      Logged in as:
+      <strong>{{ user.name }}</strong>
+      ({{ user.role }})
+    </div>
+  }
 
-@if (loading$ | async) {
-  <p>Loading characters...</p>
-} @else {
-  <ul>
-    @for (c of (characters$ | async); track c.url) {
-      <li>
-        {{ c.name }} - {{ c.gender }}
-      </li>
-    }
-  </ul>
-}
+</div>
+  <!-- Loans -->
+  <div class="card loans">
+    <h3>Your Loan Requests</h3>
+
+    <ul>
+      @for (loan of (loans$ | async); track loan.id) {
+        <li class="loan-item">
+
+          <div class="loan-info">
+            <strong>{{ loan.character }}</strong>
+            <span>→ {{ loan.asset }}</span>
+          </div>
+
+          <div class="loan-meta">
+
+            <span class="status {{ loan.status }}">
+              {{ loan.status }}
+            </span>
+
+          </div>
+
+        </li>
+      }
+    </ul>
+
+  </div>
+
+  <h2>Client Portal</h2>
+
+  <div class="grid">
+
+    <!-- Vehicles -->
+    <div class="card">
+      <h3>Vehicles</h3>
+      <ul>
+        @for (v of vehicles(); track v.url) {
+          <li>
+            <span class="name">{{ v.name }}</span>
+            <span class="model">{{ v.model }}</span>
+
+            <button class="approve" (click)="requestLoan(v.name)">
+              Request
+            </button>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <!-- Starships -->
+    <div class="card">
+      <h3>Starships</h3>
+      <ul>
+        @for (s of starships(); track s.url) {
+          <li>
+            <span class="name">{{ s.name }}</span>
+            <span class="model">{{ s.model }}</span>
+
+            <button class="approve" (click)="requestLoan(s.name)">
+              Request
+            </button>
+          </li>
+        }
+      </ul>
+    </div>
+
+  </div>
+
+</div>

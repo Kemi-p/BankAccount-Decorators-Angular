@@ -15,13 +15,29 @@ import { UserService } from './services/user-service';
 import { User } from './models/userModel';
 import { THEME_CONFIG, ThemeConfig } from './factory/theme-factory';
 import { Router, RouterLinkActive, RouterOutlet } from '@angular/router';
+
 @Component({
   selector: 'app-root',
-  imports: [RouterLinkActive, RouterOutlet],
+  imports: [ RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
 export class App {
+  themeConfig = inject(THEME_CONFIG)
+
+   ngOnInit() {
+    this.applyTheme();
+  }
+
+  applyTheme() {
+  const body = document.body;
+
+  if (this.themeConfig.theme === 'dark') {
+    body.classList.add('dark-theme');
+  } else {
+    body.classList.remove('dark-theme');
+  }
+}
   private router = inject(Router);
 
   navigateToBank(){

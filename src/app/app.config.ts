@@ -5,12 +5,13 @@ import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { characterReducer } from './state/characters/character.reducer';
+import { appReducer } from './state/app/app.reducer';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     [provideHttpClient()],
-    provideStore({characters: characterReducer}),
+    provideStore({characters: characterReducer, app:appReducer}),
   ],
 };

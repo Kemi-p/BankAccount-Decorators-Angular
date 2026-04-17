@@ -1,8 +1,8 @@
 import { Component, inject } from "@angular/core"
 import { SwapiService, Person } from "../../services/swapi-service"
 import { CommonModule } from "@angular/common";
-import * as CharacterActions from '../../state/character.actions'
-import * as CharacterSelectors from '../../state/character.selector'
+import * as CharacterActions from '../../state/characters/character.actions'
+import * as CharacterSelectors from '../../state/characters/character.selector'
 import { Store } from "@ngrx/store";
 @Component({
     selector:'login',

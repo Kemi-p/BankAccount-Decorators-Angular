@@ -1,4 +1,4 @@
-import { Person } from "../services/swapi-service";
+import { Person } from "../../services/swapi-service";
 
 export interface CharacterState {
   characters: Person[];

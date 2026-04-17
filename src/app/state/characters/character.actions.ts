@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { Person } from '../services/swapi-service';
+import { Person } from '../../services/swapi-service';
 
 export const loadCharacters = createAction('[Characters] Load');
 

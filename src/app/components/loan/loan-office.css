@@ -1,3 +1,15 @@
+.logout {
+  margin-right: auto;
+  background: #a6bef1;
+  color: white;
+}
+
+.nav {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 16px;
+}
+
 .page {
   padding: 24px;
 }

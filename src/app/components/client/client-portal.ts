@@ -6,7 +6,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { selectUser } from '../../state/app/app.rselector';
 import { selectLoans } from '../../state/app/app.rselector';
 import { AsyncPipe } from '@angular/common';
-import { MatCard, MatCardActions, MatCardContent, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import { Router } from '@angular/router';
 import {MatChipsModule} from '@angular/material/chips';
 
 @Component({
@@ -18,13 +18,17 @@ import {MatChipsModule} from '@angular/material/chips';
 export class ClientPortalComponent {
   private swapi = inject(SwapiService);
   private store = inject(Store);
+  private router = inject(Router)
 
   vehicles = toSignal(this.swapi.getVehicles(), { initialValue: [] });
   starships = toSignal(this.swapi.getStarships(), { initialValue: [] });
 
   user$ = this.store.select(selectUser);
   loans$ = this.store.select(selectLoans)
-
+  
+ logout() {
+  this.router.navigate(['/login']);
+}
   requestLoan(assetName: string) {
     let userName = '';
 

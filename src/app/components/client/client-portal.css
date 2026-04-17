@@ -121,3 +121,15 @@ button:hover {
   border-radius: 8px;
   font-size: 0.9rem;
 }
+
+.logout {
+  margin-right: auto;
+  background: #a6bef1;
+  color: white;
+}
+
+.nav {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 16px;
+}

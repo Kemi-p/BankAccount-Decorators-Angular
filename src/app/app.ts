@@ -51,4 +51,6 @@ export class App {
   navigateToLoan(){
     this.router.navigate(['/loan'])
   }
+
+ 
 }

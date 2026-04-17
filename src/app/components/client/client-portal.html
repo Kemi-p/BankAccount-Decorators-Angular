@@ -10,7 +10,6 @@
   }
 
 </div>
-  <!-- Loans -->
   <div class="card loans">
     <h3>Your Loan Requests</h3>
 
@@ -41,14 +40,13 @@
 
   <div class="grid">
 
-    <!-- Vehicles -->
     <div class="card">
       <h3>Vehicles</h3>
       <ul>
         @for (v of vehicles(); track v.url) {
           <li>
-            <span class="name">{{ v.name }}</span>
-            <span class="model">{{ v.model }}</span>
+            <span class="name"><strong>Name:</strong> {{ v.name }}</span>
+            <span class="model"><strong>Model:</strong> {{ v.model }}</span>
 
             <button class="approve" (click)="requestLoan(v.name)">
               Request
@@ -58,14 +56,13 @@
       </ul>
     </div>
 
-    <!-- Starships -->
     <div class="card">
       <h3>Starships</h3>
       <ul>
         @for (s of starships(); track s.url) {
           <li>
-            <span class="name">{{ s.name }}</span>
-            <span class="model">{{ s.model }}</span>
+            <span class="name"> <strong>Name:</strong>{{ s.name }}</span>
+            <span class="model"> <strong>Model:</strong>{{ s.model }}</span>
 
             <button class="approve" (click)="requestLoan(s.name)">
               Request

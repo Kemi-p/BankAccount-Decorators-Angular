@@ -11,7 +11,7 @@ import {MatChipsModule} from '@angular/material/chips';
 
 @Component({
   selector: 'app-client',
-  imports:[AsyncPipe, MatCardActions, MatCardTitle, MatCard, MatCardSubtitle,MatChipsModule, MatCardContent],
+  imports:[AsyncPipe,MatChipsModule],
   templateUrl: './client-portal.html',
   styleUrls: ['./client-portal.css'],
 })

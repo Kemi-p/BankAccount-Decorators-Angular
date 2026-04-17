@@ -2,65 +2,51 @@
 
   <h2>Loan Office</h2>
 
-  <div class="grid">
-
-    <!-- Vehicles -->
-    <div class="card">
-      <h3>Vehicles</h3>
-      <ul>
-        @for (v of vehicles(); track v.url) {
-          <li>
-            <span class="name">{{ v.name }}</span>
-            <span class="model">{{ v.model }}</span>
-          </li>
-        }
-      </ul>
-    </div>
-
-    <!-- Starships -->
-    <div class="card">
-      <h3>Starships</h3>
-      <ul>
-        @for (s of starships(); track s.url) {
-          <li>
-            <span class="name">{{ s.name }}</span>
-            <span class="model">{{ s.model }}</span>
-          </li>
-        }
-      </ul>
-    </div>
-
+ 
+  <div class="user-bar">
+    @if (user$ | async; as user) {
+      <div class="user-info">
+        Logged in as:
+        <strong>{{ user.name }}</strong>
+        ({{ user.role }})
+      </div>
+    }
   </div>
 
-  <!-- Loans -->
+ 
   <div class="card loans">
     <h3>Loan Requests</h3>
 
     <ul>
-      @for (loan of loans; track loan.id) {
-        <li class="loan-item">
+      @if (loans$ | async; as loans) {
+        @for (loan of loans; track loan.id) {
+          <li class="loan-item">
 
-          <div class="loan-info">
-            <strong>{{ loan.characterName }}</strong>
-            <span>→ {{ loan.assetName }}</span>
-          </div>
+            <div class="loan-info">
+              <strong>{{ loan.character }}</strong>
+              <span>→ {{ loan.asset }}</span>
+            </div>
 
-          <div class="loan-meta">
-            <span class="status {{ loan.status }}">
-              {{ loan.status }}
-            </span>
+            <div class="loan-meta">
 
-            @if (loan.status === 'pending') {
-              <button class="approve" (click)="approve(loan.id)">
-                Approve
-              </button>
-              <button class="reject" (click)="reject(loan.id)">
-                Reject
-              </button>
-            }
-          </div>
+              <span class="status {{ loan.status }}">
+                {{ loan.status }}
+              </span>
 
-        </li>
+              @if (loan.status === 'pending') {
+                <button class="approve" (click)="approve(loan.id)">
+                  Approve
+                </button>
+
+                <button class="reject" (click)="reject(loan.id)">
+                  Reject
+                </button>
+              }
+
+            </div>
+
+          </li>
+        }
       }
     </ul>
 

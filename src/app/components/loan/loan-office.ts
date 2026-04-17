@@ -2,36 +2,30 @@ import { Component, inject } from "@angular/core"
 import { SwapiService } from "../../services/swapi-service";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { LoanService } from "../../services/loan-service";
+import * as AppActions from '../../state/app/app.actions'
+import { Store } from "@ngrx/store";
+import { selectLoans, selectUser } from "../../state/app/app.rselector";
+import { AsyncPipe } from "@angular/common";
 
 @Component({
     selector:'login',
-    imports:[],
+    imports:[AsyncPipe],
     templateUrl:'./loan-office.html',
     styleUrl:'./loan-office.css'
 })
 
 export class LoanOfficelComponent{
-     private swapi = inject(SwapiService);
-  private loanService = inject(LoanService);
+   private store = inject(Store);
 
-  vehicles = toSignal(
-    this.swapi.getVehicles(),
-    { initialValue: [] }
-  );
-
-  starships = toSignal(
-    this.swapi.getStarships(),
-    { initialValue: [] }
-  );
-
-  loans = this.loanService.getLoans();
+  loans$ = this.store.select(selectLoans);
+  user$ = this.store.select(selectUser);
 
   approve(id: number) {
-    this.loanService.approve(id);
+    this.store.dispatch(AppActions.aproveLoan({ id }));
   }
 
   reject(id: number) {
-    this.loanService.reject(id);
+    this.store.dispatch(AppActions.rejectLoan({ id }));
   }
 
 }

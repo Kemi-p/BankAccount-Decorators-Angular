@@ -17,5 +17,16 @@ export const appReducer = createReducer(
         ...state,
         loans: [...state.loans,loan]
     })),
-
+    on(AppActions.aproveLoan, (state, { id }) => ({
+    ...state,
+    loans: state.loans.map(l =>
+      l.id === id ? { ...l, status: 'approved' } : l
+    ),
+  })),
+  on(AppActions.rejectLoan, (state, { id }) => ({
+    ...state,
+    loans: state.loans.map(l =>
+      l.id === id ? { ...l, status: 'rejected' } : l
+    ),
+}))
 )

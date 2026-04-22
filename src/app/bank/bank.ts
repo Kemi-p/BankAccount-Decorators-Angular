@@ -43,9 +43,7 @@ export class BankComponent {
 
   selectedAccountId: number | null = null;
 
-  ngOnInit() {
-    this.applyTheme();
-  }
+
 
   currentUser:User = this.userService.getUser()
 
@@ -61,16 +59,6 @@ export class BankComponent {
   get netWorth() : number {
     return this.netWorthser.calcNetWorth(this.accounts)
   }
-  
-  applyTheme() {
-  const body = document.body;
-
-  if (this.themeConfig.theme === 'dark') {
-    body.classList.add('dark-theme');
-  } else {
-    body.classList.remove('dark-theme');
-  }
-}
 
   closeDetails() {
     this.selectedAccountId = null;

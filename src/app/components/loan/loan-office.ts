@@ -1,7 +1,4 @@
 import { Component, inject } from "@angular/core"
-import { SwapiService } from "../../services/swapi-service";
-import { toSignal } from "@angular/core/rxjs-interop";
-import { LoanService } from "../../services/loan-service";
 import * as AppActions from '../../state/app/app.actions'
 import { Store } from "@ngrx/store";
 import { selectLoans, selectUser } from "../../state/app/app.rselector";
@@ -31,5 +28,4 @@ logout() {
   reject(id: number) {
     this.store.dispatch(AppActions.rejectLoan({ id }));
   }
-
 }

@@ -3,8 +3,7 @@ import { SwapiService, Vehicle, Starship } from '../../services/swapi-service';
 import { Store } from '@ngrx/store';
 import * as AppActions from '../../state/app/app.actions';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { selectUser } from '../../state/app/app.rselector';
-import { selectLoans } from '../../state/app/app.rselector';
+import { selectUser, selectUserLoan } from '../../state/app/app.rselector';
 import { AsyncPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import {MatChipsModule} from '@angular/material/chips';
@@ -24,7 +23,7 @@ export class ClientPortalComponent {
   starships = toSignal(this.swapi.getStarships(), { initialValue: [] });
 
   user$ = this.store.select(selectUser);
-  loans$ = this.store.select(selectLoans)
+  loans$ = this.store.select(selectUserLoan)
   
  logout() {
   this.router.navigate(['/login']);

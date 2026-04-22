@@ -13,3 +13,12 @@ export const selectLoans = createSelector(
   selectAppState,
   state => state.loans
 );
+
+export const selectUserLoan= createSelector(
+   selectUser,
+  selectLoans,
+  (user, loans) => {
+    if (!user) return [];
+    return loans.filter(loan => loan.character === user.name);
+  }
+)

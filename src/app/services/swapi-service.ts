@@ -26,9 +26,7 @@ export interface Starship {
 
 export class SwapiService {
     private http= inject(HttpClient)
-    
-
-    getCharacters(): Observable<Person[]>{ return this.http.get<Person[]>(`https://swapi.info/api/people`)}
-    getVehicles(): Observable<Vehicle[]>{ return this.http.get<Vehicle[]>(`https://swapi.info/api/vehicles`)}
-    getStarships(): Observable<Starship[]>{ return this.http.get<Starship[]>(`https://swapi.info/api/starships`)}
+    getCharacters(): Observable<Person[]>{ return this.http.get<Person[]>(`http://localhost:3000/swapi/characters`)}
+    getVehicles(): Observable<Vehicle[]>{ return this.http.get<Vehicle[]>(`http://localhost:3000/swapi/vehicles`)}
+    getStarships(): Observable<Starship[]>{ return this.http.get<Starship[]>(`http://localhost:3000/swapi/starships`)}
 }

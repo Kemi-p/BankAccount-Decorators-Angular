@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { ClientPortalComponent } from './components/client/client-portal';
 import { LoanOfficelComponent } from './components/loan/loan-office';
 import { App } from './app';
-import { BankComponent } from './bank/bank';
+import { BankComponent } from './components/bank/bank';
 import { LoginComponent } from './login/login';
 import { bankeGuard } from './routeGuards/role-guard';
 import { clientGuard } from './routeGuards/clientRole-guard';

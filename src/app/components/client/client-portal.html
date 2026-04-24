@@ -1,27 +1,69 @@
 
 <div class="page">
   <div class="nav">
-  <button class="logout" (click)="logout()">Logout</button>
-
-</div>
+    <button class="logout" (click)="logout()">Logout</button>
+  </div>
   <div class="user-bar">
+    @if (user; as currentUser) {
+      <div class="user-info">
+        Logged in as:
+        <strong>{{ currentUser.name }}</strong>
+        ({{ currentUser.role }})
+      </div>
+    }
+  </div>
 
-  @if (user$ | async; as user) {
-    <div class="user-info">
-      Logged in as:
-      <strong>{{ user.name }}</strong>
-      ({{ user.role }})
+  <h2>Client Portal</h2>
+
+  @if (createAccountSuccess) {
+    <div class="notice success">
+      {{ createAccountSuccess }}
     </div>
   }
 
-</div>
+  <div class="card accounts">
+    <div class="section-header">
+      <div>
+        <h3>Your Bank Accounts</h3>
+      </div>
+
+      <button class="primary-action" (click)="openCreateAccountModal()">
+        Create Bank Account
+      </button>
+    </div>
+
+    @if (accountsLoading) {
+      <p class="empty-state">Loading your accounts service...</p>
+    } @else if (accountsError) {
+      <div class="notice error">
+        {{ accountsError }}
+      </div>
+    } @else if (accounts.length) {
+      <ul class="account-list">
+        @for (account of accounts; track trackAccount($index, account)) {
+          <li class="account-item">
+            <div class="account-main">
+              <strong>{{ account.type | titlecase }} Account</strong>
+              <span>{{ account.accountNumber }}</span>
+            </div>
+
+            <div class="account-meta">
+              <span>Balance: R {{ account.balance | number: '1.2-2' }}</span>
+              <span>Status: {{ account.status | titlecase }}</span>
+              <span>Opened: {{ account.createdAt | date: 'mediumDate' }}</span>
+            </div>
+          </li>
+        }
+      </ul>
+    } 
+  </div>
+
   <div class="card loans">
     <h3>Your Loan Requests</h3>
 
     <ul>
-      @for (loan of (loans$ | async); track loan.id) {
+      @for (loan of loans; track loan.id) {
         <li class="loan-item">
-
           <div class="loan-info">
             <strong>{{ loan.character }}</strong>
             <span>→ {{ loan.asset }}</span>
@@ -38,17 +80,13 @@
         </li>
       }
     </ul>
-
   </div>
 
-  <h2>Client Portal</h2>
-
   <div class="grid">
-
     <div class="card">
       <h3>Vehicles</h3>
       <ul>
-        @for (v of vehicles(); track v.url) {
+        @for (v of vehicles; track v.url) {
           <li>
             <span class="name"><strong>Name:</strong> {{ v.name }}</span>
             <span class="model"><strong>Model:</strong> {{ v.model }}</span>
@@ -64,7 +102,7 @@
     <div class="card">
       <h3>Starships</h3>
       <ul>
-        @for (s of starships(); track s.url) {
+        @for (s of starships; track s.url) {
           <li>
             <span class="name"> <strong>Name:</strong>{{ s.name }}</span>
             <span class="model"> <strong>Model:</strong>{{ s.model }}</span>
@@ -76,7 +114,67 @@
         }
       </ul>
     </div>
-
   </div>
-
 </div>
+
+@if (isCreateAccountModalOpen) {
+  <div class="modal-backdrop" (click)="closeCreateAccountModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h3>Create Bank Account</h3>
+        </div>
+
+        <button class="ghost-action" type="button" (click)="closeCreateAccountModal()">
+          Close
+        </button>
+      </div>
+
+      <form class="account-form" (ngSubmit)="createAccount()">
+        <label>
+          Character Name
+          <input
+            name="ownerName"
+            [(ngModel)]="accountForm.ownerName"
+            readonly
+          />
+        </label>
+
+        <label>
+          Account Type
+          <select name="type" [(ngModel)]="accountForm.type">
+            <option value="savings">Savings</option>
+            <option value="current">Current</option>
+            <option value="fixed">Fixed</option>
+          </select>
+        </label>
+
+        <label>
+          Initial Deposit
+          <input
+            name="initialDeposit"
+            type="number"
+            min="0"
+            step="0.01"
+            [(ngModel)]="accountForm.initialDeposit"
+          />
+        </label>
+
+        @if (createAccountError) {
+          <div class="notice error">
+            {{ createAccountError }}
+          </div>
+        }
+
+        <div class="modal-actions">
+          <button type="button" class="ghost-action" (click)="closeCreateAccountModal()">
+            Cancel
+          </button>
+          <button type="submit" class="primary-action" [disabled]="isCreatingAccount">
+            {{ isCreatingAccount ? 'Creating...' : 'Save Account' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

@@ -25,3 +25,22 @@ export interface OpenDenoBankAccountPayload {
   type: DenoAccountType;
   initialDeposit?: number;
 }
+
+export interface DenoFundsPayload {
+  amount: number;
+  description?: string;
+}
+
+export interface DenoTransferPayload {
+  fromAccountId: string;
+  toAccountId: string;
+  amount: number;
+  description?: string;
+}
+
+export interface DenoTransferResponse {
+  message: string;
+  from: { id: string; balance: number };
+  to: { id: string; balance: number };
+  amount: number;
+}

@@ -1,22 +1,23 @@
-import { DatePipe, DecimalPipe, TitleCasePipe } from '@angular/common';
+import { AsyncPipe, DatePipe, DecimalPipe, TitleCasePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
-import { Starship, SwapiService, Vehicle } from '../../services/swapi-service';
+import { firstValueFrom, Subscription } from 'rxjs';
+import { SwapiService } from '../../services/swapi-service';
 import { Store } from '@ngrx/store';
 import * as AppActions from '../../state/app/app.actions';
 import { selectUser, selectUserLoan } from '../../state/app/app.rselector';
 import { Router } from '@angular/router';
 import {
   DenoBankAccount,
+  DenoFundsPayload,
   OpenDenoBankAccountPayload,
+  DenoTransferPayload,
 } from '../../models/accountsModel';
 import { AccountApiService } from '../../services/account-api-service';
-import { AppState, Loan } from '../../state/app/app.state';
 
 @Component({
   selector: 'app-client',
-  imports: [DatePipe, DecimalPipe, FormsModule, TitleCasePipe],
+  imports: [AsyncPipe, DatePipe, DecimalPipe, FormsModule, TitleCasePipe],
   templateUrl: './client-portal.html',
   styleUrls: ['./client-portal.css'],
 })
@@ -26,22 +27,28 @@ export class ClientPortalComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private accountApi = inject(AccountApiService);
   private cdr = inject(ChangeDetectorRef);
-  private subscriptions = new Subscription();
-  private accountsLoadSub?: Subscription;
-  private createAccountSub?: Subscription;
+  private userSub?: Subscription;
 
-  vehicles: Vehicle[] = [];
-  starships: Starship[] = [];
-  user: AppState['user'] = null;
-  loans: Loan[] = [];
+  vehicles$ = this.swapi.getVehicles();
+  starships$ = this.swapi.getStarships();
+  user$ = this.store.select(selectUser);
+  loans$ = this.store.select(selectUserLoan);
+  currentUserName = '';
 
   accounts: DenoBankAccount[] = [];
+  allAccounts: DenoBankAccount[] = [];
   accountsLoading = false;
   accountsError = '';
   createAccountError = '';
   createAccountSuccess = '';
+  actionError = '';
+  actionSuccess = '';
   isCreateAccountModalOpen = false;
   isCreatingAccount = false;
+  isTransferModalOpen = false;
+  isWithdrawModalOpen = false;
+  isProcessingAccountAction = false;
+  selectedAccount: DenoBankAccount | null = null;
 
   accountForm: OpenDenoBankAccountPayload = {
     ownerName: '',
@@ -49,53 +56,37 @@ export class ClientPortalComponent implements OnInit, OnDestroy {
     initialDeposit: 0,
   };
 
+  withdrawForm: DenoFundsPayload = {
+    amount: 0,
+    description: '',
+  };
+
+  transferForm: DenoTransferPayload = {
+    fromAccountId: '',
+    toAccountId: '',
+    amount: 0,
+    description: '',
+  };
+
   ngOnInit() {
-    this.subscriptions.add(
-      this.swapi.getVehicles().subscribe({
-        next: (vehicles) => {
-          this.vehicles = vehicles;
-          this.cdr.markForCheck();
-        },
-      }),
-    );
+    this.userSub = this.user$.subscribe((user) => {
+      this.currentUserName = user?.name ?? '';
 
-    this.subscriptions.add(
-      this.swapi.getStarships().subscribe({
-        next: (starships) => {
-          this.starships = starships;
-          this.cdr.markForCheck();
-        },
-      }),
-    );
-
-    this.subscriptions.add(
-      this.store.select(selectUser).subscribe((user) => {
-        this.user = user;
-
-        if (!user) {
-          this.accounts = [];
-          this.cdr.markForCheck();
-          return;
-        }
-
-        this.accountForm.ownerName = user.name;
-        this.loadAccounts(user.name);
+      if (!user) {
+        this.accounts = [];
+        this.accountForm.ownerName = '';
         this.cdr.markForCheck();
-      }),
-    );
+        return;
+      }
 
-    this.subscriptions.add(
-      this.store.select(selectUserLoan).subscribe((loans) => {
-        this.loans = loans;
-        this.cdr.markForCheck();
-      }),
-    );
+      this.accountForm.ownerName = user.name;
+      void this.loadAccounts(user.name);
+      this.cdr.markForCheck();
+    });
   }
 
   ngOnDestroy() {
-    this.accountsLoadSub?.unsubscribe();
-    this.createAccountSub?.unsubscribe();
-    this.subscriptions.unsubscribe();
+    this.userSub?.unsubscribe();
   }
 
   logout() {
@@ -103,7 +94,7 @@ export class ClientPortalComponent implements OnInit, OnDestroy {
   }
 
   requestLoan(assetName: string) {
-    const userName = this.user?.name;
+    const userName = this.currentUserName;
     if (!userName) {
       return;
     }
@@ -121,16 +112,17 @@ export class ClientPortalComponent implements OnInit, OnDestroy {
   }
 
   openCreateAccountModal() {
-    const currentUser = this.user;
-    if (!currentUser) {
+    if (!this.currentUserName) {
       return;
     }
 
     this.createAccountError = '';
     this.createAccountSuccess = '';
+    this.actionError = '';
+    this.actionSuccess = '';
     this.isCreatingAccount = false;
     this.accountForm = {
-      ownerName: currentUser.name,
+      ownerName: this.currentUserName,
       type: 'savings',
       initialDeposit: 0,
     };
@@ -143,12 +135,57 @@ export class ClientPortalComponent implements OnInit, OnDestroy {
     this.isCreatingAccount = false;
   }
 
-  createAccount() {
+  openWithdrawModal(account: DenoBankAccount) {
+    this.selectedAccount = account;
+    this.actionError = '';
+    this.actionSuccess = '';
+    this.isProcessingAccountAction = false;
+    this.withdrawForm = {
+      amount: 0,
+      description: `Cash withdrawal from ${account.accountNumber}`,
+    };
+    this.isWithdrawModalOpen = true;
+  }
+
+  closeWithdrawModal() {
+    this.isWithdrawModalOpen = false;
+    this.isProcessingAccountAction = false;
+    this.actionError = '';
+    this.selectedAccount = null;
+  }
+
+  openTransferModal(account: DenoBankAccount) {
+    this.selectedAccount = account;
+    this.actionError = '';
+    this.actionSuccess = '';
+    this.isProcessingAccountAction = false;
+    this.transferForm = {
+      fromAccountId: account.id,
+      toAccountId: '',
+      amount: 0,
+      description: `Transfer from ${account.accountNumber}`,
+    };
+    this.isTransferModalOpen = true;
+  }
+
+  closeTransferModal() {
+    this.isTransferModalOpen = false;
+    this.isProcessingAccountAction = false;
+    this.actionError = '';
+    this.selectedAccount = null;
+  }
+
+  async createAccount() {
     const payload: OpenDenoBankAccountPayload = {
       ownerName: this.accountForm.ownerName.trim(),
       type: this.accountForm.type,
       initialDeposit: Number(this.accountForm.initialDeposit) || 0,
     };
+
+    if (!payload.ownerName) {
+      this.createAccountError = 'Character name is required.';
+      return;
+    }
 
     if (payload.initialDeposit! < 0) {
       this.createAccountError = 'Initial deposit cannot be negative.';
@@ -158,56 +195,131 @@ export class ClientPortalComponent implements OnInit, OnDestroy {
     this.isCreatingAccount = true;
     this.createAccountError = '';
     this.createAccountSuccess = '';
+    this.actionSuccess = '';
 
-    this.createAccountSub?.unsubscribe();
-    this.createAccountSub = this.accountApi.createAccount(payload).subscribe({
-      next: () => {
-        this.isCreatingAccount = false;
-        this.closeCreateAccountModal();
-        this.createAccountSuccess = `${payload.type} account created for ${payload.ownerName}.`;
-
-        if (this.user?.name) {
-          this.loadAccounts(this.user.name);
-        }
-
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.createAccountError =
-          'Could not create the account. Make sure the Deno service is running on port 3001.';
-        this.isCreatingAccount = false;
-        this.cdr.markForCheck();
-      },
-    });
-
-    this.subscriptions.add(this.createAccountSub);
+    try {
+      await firstValueFrom(this.accountApi.createAccount(payload));
+      this.closeCreateAccountModal();
+      this.createAccountSuccess = `${payload.type} account created for ${payload.ownerName}.`;
+      await this.loadAccounts(payload.ownerName);
+    } catch {
+      this.createAccountError =
+        'Could not create the account. Make sure the Deno service is running on port 3001.';
+    } finally {
+      this.isCreatingAccount = false;
+      this.cdr.markForCheck();
+    }
   }
 
   trackAccount(_index: number, account: DenoBankAccount) {
     return account.id;
   }
 
-  private loadAccounts(ownerName: string) {
-    this.accountsLoadSub?.unsubscribe();
+  get transferTargets(): DenoBankAccount[] {
+    if (!this.selectedAccount) {
+      return [];
+    }
+
+    return this.allAccounts.filter(
+      (account) =>
+        account.id !== this.selectedAccount?.id && account.status === 'active',
+    );
+  }
+
+  async submitWithdraw() {
+    if (!this.selectedAccount) {
+      return;
+    }
+
+    if (this.withdrawForm.amount <= 0) {
+      this.actionError = 'Enter a withdrawal amount greater than zero.';
+      return;
+    }
+
+    this.isProcessingAccountAction = true;
+    this.actionError = '';
+    this.actionSuccess = '';
+    const sourceAccount = this.selectedAccount;
+
+    try {
+      await firstValueFrom(
+        this.accountApi.withdraw(sourceAccount.id, {
+          amount: Number(this.withdrawForm.amount),
+          description: this.withdrawForm.description?.trim() || 'Withdrawal',
+        }),
+      );
+      const withdrawnAmount = this.withdrawForm.amount;
+      this.closeWithdrawModal();
+      this.actionSuccess = `R ${withdrawnAmount.toFixed(2)} withdrawn from ${sourceAccount.accountNumber}.`;
+      await this.loadAccounts(this.currentUserName);
+    } catch {
+      this.actionError = 'Could not withdraw funds from this account.';
+    } finally {
+      this.isProcessingAccountAction = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  async submitTransfer() {
+    if (!this.selectedAccount) {
+      return;
+    }
+
+    if (!this.transferForm.toAccountId) {
+      this.actionError = 'Choose a destination account.';
+      return;
+    }
+
+    if (this.transferForm.amount <= 0) {
+      this.actionError = 'Enter a transfer amount greater than zero.';
+      return;
+    }
+
+    this.isProcessingAccountAction = true;
+    this.actionError = '';
+    this.actionSuccess = '';
+    const sourceAccount = this.selectedAccount;
+
+    const destinationAccount = this.transferTargets.find(
+      (account) => account.id === this.transferForm.toAccountId,
+    );
+
+    try {
+      await firstValueFrom(
+        this.accountApi.transfer({
+          fromAccountId: sourceAccount.id,
+          toAccountId: this.transferForm.toAccountId,
+          amount: Number(this.transferForm.amount),
+          description: this.transferForm.description?.trim() || 'Transfer',
+        }),
+      );
+      const transferAmount = this.transferForm.amount;
+      this.closeTransferModal();
+      this.actionSuccess = `R ${transferAmount.toFixed(2)} transferred from ${sourceAccount.accountNumber} to ${destinationAccount?.ownerName ?? 'selected account'}.`;
+      await this.loadAccounts(this.currentUserName);
+    } catch {
+      this.actionError = 'Could not complete the transfer.';
+    } finally {
+      this.isProcessingAccountAction = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  private async loadAccounts(ownerName: string) {
     this.accountsLoading = true;
     this.accountsError = '';
 
-    this.accountsLoadSub = this.accountApi.getAccounts().subscribe({
-      next: (accounts) => {
-        this.accounts = accounts.filter(
-          (account) => account.ownerName === ownerName,
-        );
-        this.accountsLoading = false;
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.accounts = [];
-        this.accountsError = 'Cant find accounts in your name, create an acc';
-        this.accountsLoading = false;
-        this.cdr.markForCheck();
-      },
-    });
-
-    this.subscriptions.add(this.accountsLoadSub);
+    try {
+      const accounts = await firstValueFrom(this.accountApi.getAccounts());
+      this.allAccounts = accounts;
+      this.accounts = accounts.filter((account) => account.ownerName === ownerName);
+    } catch {
+      this.accounts = [];
+      this.allAccounts = [];
+      this.accountsError = 'Cant find accounts in your name, create an acc';
+    } finally {
+      this.accountsLoading = false;
+      this.cdr.markForCheck();
+    }
   }
 }

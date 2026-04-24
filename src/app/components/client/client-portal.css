@@ -167,6 +167,11 @@ button:hover {
   font-size: 0.9rem;
 }
 
+.account-actions {
+  display: flex;
+  gap: 10px;
+}
+
 .notice {
   border-radius: 10px;
   padding: 12px 14px;
@@ -190,6 +195,16 @@ button:hover {
 
 .primary-action {
   background: #2457c5;
+  color: white;
+}
+
+.withdraw-action {
+  background: #8a5a12;
+  color: white;
+}
+
+.transfer-action {
+  background: #1f6b35;
   color: white;
 }
 
